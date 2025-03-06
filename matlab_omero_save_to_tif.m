@@ -11,7 +11,7 @@ servername='camdu.warwick.ac.uk';
 client = loadOmero(servername);
 session = client.createSession(username, password);
 
-for i=1:length(imageID)
+for i=1:length(imageIDs)
 [image_name,stacks]=fetch_stack(session,imageIDs(i));
 output_name=sprintf('%s.tif',image_name);
 save_as_imagej_tif(stacks, output_name);
