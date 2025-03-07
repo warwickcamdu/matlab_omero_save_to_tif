@@ -55,6 +55,7 @@ function [image_name,stacks,metadata]=fetch_stack(session,imageID)
             end
         end
     end
+    channels = loadChannels(session, image);
     store.close();
     
     metadata = createMinimalOMEXMLMetadata(stacks);
@@ -63,6 +64,17 @@ function [image_name,stacks,metadata]=fetch_stack(session,imageID)
     metadata.setPixelsPhysicalSizeY(pixelSize, 0);
     pixelSizeZ = ome.units.quantity.Length(java.lang.Double(voxelZ), ome.units.UNITS.MICROMETER);
     metadata.setPixelsPhysicalSizeZ(pixelSizeZ, 0);
-    pixelSizeZ = ome.units.quantity.Length(java.lang.Double(voxelZ), ome.units.UNITS.MICROMETER);
+    for c = 0 : sizeC - 1
+        channel = channels(c+1);
+        lc=channel.getLogicalChannel();
+        cn=lc.getName.getValue();
+        metadata.setChannelName(cn, 0, c);
+        exw=lc.getExcitationWave().getValue();
+        ExM = ome.units.quantity.Length(java.lang.Double(exw), ome.units.UNITS.NANOMETER);
+        emw=lc.getEmissionWave().getValue();
+        EmM = ome.units.quantity.Length(java.lang.Double(emw), ome.units.UNITS.NANOMETER);
+        metadata.setChannelExcitationWavelength(ExM, 0, c);
+        metadata.setChannelEmissionWavelength(ExM, 0, c);
+    end
 
 end
